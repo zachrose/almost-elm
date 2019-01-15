@@ -1,0 +1,3 @@
+All of us who have tried it know that Elm is a generally better than anything that can be put together with JavaScript libraries, frameworks, and tooling bolt-ons. The downside? It’s cultural connections to the functional programming community lead colleagues and CTOs to think that it will be too clever and impractical for workaday JavaScript developers. Although nothing could be farther from the truth, Elm remains a hard sell.
+
+So what can be done? JavaSchitt 2019 proposes an underhanded plan of adding JavaScript tooling until you’ve got 80% of Elm, and then migrating to Elm for performance, type inference, better tooling, and reduced conceptual overhead.
