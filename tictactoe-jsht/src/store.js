@@ -10,8 +10,8 @@ const enhancer = compose(
 );
 
 export type State = {
-  roll: Roll | null,
-  rolling: boolean
+  +roll: Roll | null,
+  +rolling: boolean
 }
 
 const initialState: State = {

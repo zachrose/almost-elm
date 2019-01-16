@@ -1,12 +1,12 @@
 // @flow
 
 export type Roll = {
-  dice: [number, number],
-  total: number
+  +dice: [number, number],
+  +total: number
 }
 
 export type RollResponse = {
-  details: string
+  +details: string
 }
 
 export function toRoll (res: RollResponse): Roll {
