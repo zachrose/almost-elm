@@ -6,10 +6,12 @@ import Html exposing (Html, text, div, h1, img, p, button)
 import Html.Attributes exposing (src, class)
 import Html.Events exposing (onClick)
 import Http
-
 import Json.Decode exposing (Decoder, field, string)
+import Parser exposing (Parser, (|.), (|=), succeed, symbol, int, spaces, run)
 
 ---- MODEL ----
+
+type alias TwoDice = (Int, Int)
 
 type alias Roll =
   {
@@ -20,8 +22,7 @@ type alias Roll =
 
 type alias Model =
     { roll: Maybe Roll,
-      rolling: Bool,
-      s: Maybe String
+      rolling: Bool
     }
 
 
@@ -29,20 +30,16 @@ init : ( Model, Cmd Msg )
 init =
     ( {
       roll = Nothing,
-      rolling = False,
-      s = Nothing
+      rolling = False
     }, Cmd.none )
 
 
-
 ---- UPDATE ----
-
 
 type Msg
     = RollDice
     | DiceRollSuccessful (Result Http.Error String)
     | DiceRollFailed
-
 
 rollDecoder : Decoder String
 rollDecoder =
@@ -56,40 +53,60 @@ rollDice =
   }
   
 
+diceParser : Parser TwoDice
+diceParser =
+  succeed (\x y -> (x, y))
+    |. spaces
+    |. symbol "("
+    |. spaces
+    |= int
+    |. spaces
+    |. symbol "+"
+    |= int
+    |. spaces
+    |. symbol ")"
+
+parseRoll : String -> Roll
+parseRoll string =
+  case (run diceParser string) of
+    Ok t -> { dice = t, total = Tuple.first(t) + Tuple.second(t) }
+    Err f -> { dice = (0, 0), total = 0 } -- needs fixing
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
       RollDice -> ({ model | rolling = True }, rollDice)
       DiceRollSuccessful result ->
         ({ model |
-          rolling = False, s = Just (Result.withDefault "nope" (result))}, Cmd.none)
+          rolling = False,
+          roll = Result.toMaybe (Result.map parseRoll result)
+        }, Cmd.none)
       DiceRollFailed -> ( model, Cmd.none )
 
 ---- VIEW ----
 
 formatRoll : Roll -> String
 formatRoll roll =
-  String.fromInt (Tuple.first roll.dice)
+  let
+    (first, second) = roll.dice
+    total = String.fromInt(first + second)
+  in
+    String.fromInt(first) ++ " + " ++ String.fromInt(second) ++ " = " ++ total
 
 view : Model -> Html Msg
 view model =
-    let
-      p1 = case model.roll of
+  let
+      r = case model.roll of
         Nothing -> p [ class "hide" ] [ text "no roll" ]
-        _ -> p [] [ text "uh" ]
-      p2 = case model.rolling of
-        True -> p [] [ text "rolling" ]
-        False -> p [] [ text "not rolling" ]
+        Just roll -> p [] [ text (formatRoll roll )]
+      state = if model.rolling then "rolling" else "not rolling"
       b = button [onClick RollDice] [ text "Roll the Dice" ]
-      d = case model.s of
-        Nothing -> p [] [ text "nothing" ]
-        _ -> p [] [ text (Maybe.withDefault "ugh" (model.s)) ]
     in
-    div [ class "App" ] [
-      p1, p2, b, d
+ div [ class "App" ] [
+      r,
+      p [] [ text (state) ],
+      b
     ]
-
-
 
 ---- PROGRAM ----
 
