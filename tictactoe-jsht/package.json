@@ -12,11 +12,11 @@
     "redux-loop": "^4.5.2"
   },
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "mocha",
     "eject": "react-scripts eject",
-    "flow": "flow"
+    "flow": "flow",
+    "start": "react-scripts start",
+    "test": "mocha"
   },
   "eslintConfig": {
     "extends": "react-app"
