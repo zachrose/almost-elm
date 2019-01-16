@@ -1,6 +1,6 @@
 // @flow
 
-export const rollDice = () => {
+const rollDice = () => {
   return {
     type: 'ROLL_DICE'
   };

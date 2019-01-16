@@ -1,14 +1,17 @@
 // @flow
 import React from 'react';
+import type { Node } from 'react';
 import { connect } from 'react-redux';
 import './App.css';
-import {rollDice} from './actions/index';
+import actions from './actions/index';
+import type { Roll } from './lib/roll';
+import type { State } from './store';
 
-function formatRoll(roll : Array<number>): string {
-  return roll[0] + ' + ' + roll[1] + ' = ' + (roll[0] + roll[1]);
+function formatRoll(roll: Roll): string {
+  return roll.dice[0] + ' + ' + roll.dice[1] + ' = ' + roll.total;
 }
 
-function App(props) {
+function App(props: State & typeof actions): Node {
   return (
     <div className="App">
       <p className={props.roll ? '' : 'hide'}>{props.roll ? formatRoll(props.roll) : 'no roll'}</p>
@@ -19,15 +22,8 @@ function App(props) {
 }
 
 /*
- * There's no need to rearrange Redux state into React props yet.
+ * There isn't a need to rearrange Redux state into React props yet.
  */
 const mapState = (state) => state;
 
-/*
- * Boilerplate: action creators need to be listed here.
- */
-const dispatchables = {
-  rollDice
-}
-
-export default connect(mapState, dispatchables)(App);
+export default connect(mapState, actions)(App);

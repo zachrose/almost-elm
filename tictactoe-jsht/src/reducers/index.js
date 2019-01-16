@@ -1,20 +1,22 @@
 // @flow
 import { loop, Cmd } from 'redux-loop';
-import type { State } from '../initialState';
+import type { State } from '../store';
+import type { Roll, RollResponse } from '../lib/roll';
+import { toRoll } from '../lib/roll'
 
 export type Action =
   | { type: 'ROLL_DICE' }
-  | { type: 'DICE_ROLL_SUCCESSFUL', roll: any }
+  | { type: 'DICE_ROLL_SUCCESSFUL', roll: Roll }
   | { type: 'DICE_ROLL_FAILED' };
 
-function requestDiceRoll() : Promise<{}> {
+function requestDiceRoll() : Promise<RollResponse> {
   return fetch('https://rolz.org/api/?2d6.json').then((res) => res.json());
 }
 
-function diceRollSuccessfulAction(roll : {details: string}): Action {
+function diceRollSuccessfulAction(res: RollResponse): Action {
   return {
     type: 'DICE_ROLL_SUCCESSFUL',
-    roll: roll.details.split('+').map((_s) => Number((_s.match(/\d+/) || [0])[0]))
+    roll: toRoll(res)
   }
 }
 
@@ -44,7 +46,7 @@ export default function(state : State, action : Action ): State {
     case 'DICE_ROLL_FAILED':
       return {
         ...state,
-        roll: [], // fix
+        roll: null,
         rolling: false
       };
     default:
