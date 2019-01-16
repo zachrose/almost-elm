@@ -8,4 +8,6 @@ The idea of "Almost Elm" is to approximate Elm with enough JavaScript libraries 
 
 ### DiceRoll
 
+![a minimal UI for rolling two dice](https://i.imgur.com/p7FkH9i.png "DiceRoll UI")
+
 Rolls a pair of dice by hitting a [Dice Rolling API](https://rolz.org/help/api), parses a string in the JSON response to get each die, then gratuitously adds them together.
