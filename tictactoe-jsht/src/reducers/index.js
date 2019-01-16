@@ -1,39 +1,39 @@
+// @flow
 import { loop, Cmd } from 'redux-loop';
+import type { State } from '../initialState';
 
-function requestDiceRoll(args) {
+export type Action =
+  | { type: 'ROLL_DICE' }
+  | { type: 'DICE_ROLL_SUCCESSFUL', roll: any }
+  | { type: 'DICE_ROLL_FAILED' };
+
+function requestDiceRoll() : Promise<{}> {
   return fetch('https://rolz.org/api/?2d6.json').then((res) => res.json());
 }
 
-function diceRollSuccessfulAction(roll) {
+function diceRollSuccessfulAction(roll : {details: string}): Action {
   return {
     type: 'DICE_ROLL_SUCCESSFUL',
-    roll: roll.details.split('+').map((_s) => _s.match(/\d+/)[0])
+    roll: roll.details.split('+').map((_s) => Number((_s.match(/\d+/) || [0])[0]))
   }
 }
 
-function diceRollFailedAction(err) {
+function diceRollFailedAction(err: any): Action {
   return {
     type: 'DICE_ROLL_FAILED',
     err
   }
 }
 
-export default (state, action) => {
+export default function(state : State, action : Action ): State {
   switch (action.type) {
-    case 'SIMPLE_ACTION':
-      const newState = {
-        ...state,
-        result: action.payload
-      };
-      return newState;
     case 'ROLL_DICE':
       return loop({
         ...state,
         rolling: true
       }, Cmd.run(requestDiceRoll, {
         successActionCreator: diceRollSuccessfulAction,
-        failActionCreator: diceRollFailedAction,
-        args: [123]
+        failActionCreator: diceRollFailedAction
       }))
     case 'DICE_ROLL_SUCCESSFUL':
       return {
@@ -44,7 +44,7 @@ export default (state, action) => {
     case 'DICE_ROLL_FAILED':
       return {
         ...state,
-        roll: 'failed',
+        roll: [], // fix
         rolling: false
       };
     default:

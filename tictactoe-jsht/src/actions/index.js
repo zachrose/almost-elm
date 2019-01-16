@@ -1,7 +1,8 @@
+// @flow
+
 export const rollDice = () => {
   return {
-    type: 'ROLL_DICE',
-    payload: 'feeding-to-simple-action'
+    type: 'ROLL_DICE'
   };
 }
 

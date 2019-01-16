@@ -1,10 +1,11 @@
+// @flow
 import React from 'react';
 import { connect } from 'react-redux';
 import './App.css';
 import {rollDice} from './actions/index';
 
-const formatRoll = (roll) => {
-  return roll[0] + ' + ' + roll[1] + ' = ' + (Number(roll[0]) + Number(roll[1]));
+function formatRoll(roll : Array<number>): string {
+  return roll[0] + ' + ' + roll[1] + ' = ' + (roll[0] + roll[1]);
 }
 
 function App(props) {
