@@ -8,4 +8,10 @@ describe('roll', () => {
     });
     expect(roll.dice).to.deep.equal([1,3]);
   });
+  it('computes the total', () => {
+    const roll = toRoll({
+      details: "( 1 + 3 )"
+    });
+    expect(roll.total).to.equal(4);
+  });
 });
